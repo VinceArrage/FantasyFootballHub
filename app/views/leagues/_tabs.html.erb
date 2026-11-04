@@ -1,0 +1,7 @@
+<nav class="flex flex-wrap gap-2 mb-4 text-sm">
+  <% { "Standings & roster" => league_path(league), "Waivers" => waivers_league_path(league),
+       "Trade ideas" => trades_league_path(league), "Trade log" => trade_log_league_path(league),
+       "Ammo" => ammo_league_path(league) }.each do |label, path| %>
+    <%= link_to label, path, class: ["rounded px-3 py-1", current_page?(path) ? "bg-emerald-800 text-white" : "bg-white shadow hover:bg-gray-100"] %>
+  <% end %>
+</nav>

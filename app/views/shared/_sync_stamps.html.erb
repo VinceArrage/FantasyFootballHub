@@ -1,0 +1,5 @@
+<div id="sync_stamps" class="max-w-6xl mx-auto px-4 pt-2 flex flex-wrap gap-x-4 text-xs">
+  <% %w[players leagues projections live].each do |kind| %>
+    <%= sync_stamp(kind) %>
+  <% end %>
+</div>

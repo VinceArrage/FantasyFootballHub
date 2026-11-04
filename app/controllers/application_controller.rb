@@ -4,4 +4,12 @@ class ApplicationController < ActionController::Base
 
   # Changes to the importmap will invalidate the etag for HTML responses
   stale_when_importmap_changes
+
+  before_action :require_account
+
+  private
+
+  def require_account
+    redirect_to new_setup_path unless Account.current
+  end
 end

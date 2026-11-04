@@ -1,0 +1,10 @@
+<% content_for :title, "War Room" %>
+<% if @leagues.empty? %>
+  <p class="text-gray-600">No leagues yet. The first sync usually takes under a minute.</p>
+<% else %>
+  <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <% @leagues.each do |league| %>
+      <%= render "leagues/card", league: %>
+    <% end %>
+  </div>
+<% end %>

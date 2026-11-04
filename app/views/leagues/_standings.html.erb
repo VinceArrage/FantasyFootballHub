@@ -1,0 +1,14 @@
+<div id="<%= dom_id(league, :standings) %>" class="bg-white rounded-lg shadow p-4">
+  <h2 class="font-bold mb-2">Standings</h2>
+  <table class="w-full text-sm">
+    <thead><tr class="text-left text-gray-500"><th>#</th><th>Team</th><th>W-L</th><th class="text-right">PF</th></tr></thead>
+    <tbody>
+      <% league.teams.standings.each_with_index do |team, i| %>
+        <tr class="<%= "font-semibold bg-emerald-50" if team.mine %>">
+          <td><%= i + 1 %></td><td><%= team.display_name %></td><td><%= team.record %></td>
+          <td class="text-right"><%= points(team.points_for) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

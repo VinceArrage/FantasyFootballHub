@@ -1,0 +1,17 @@
+<div class="bg-white rounded-lg shadow p-4">
+  <h2 class="font-bold mb-2">My roster</h2>
+  <% if team %>
+    <ul class="text-sm divide-y">
+      <% team.roster_spots.includes(:player).order(:slot_index).each do |spot| %>
+        <% player = spot.player %>
+        <li class="py-1 flex justify-between">
+          <span><span class="inline-block w-10 text-gray-500"><%= spot.starter ? player.position : "BN" %></span><%= player.full_name %>
+            <span class="text-gray-400"><%= player.nfl_team %></span></span>
+          <% if player.injury_status %><span class="text-red-600"><%= player.injury_status %></span><% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="text-gray-500 text-sm">You don't have a team in this league.</p>
+  <% end %>
+</div>

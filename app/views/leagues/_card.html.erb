@@ -1,0 +1,10 @@
+<% my_team = league.my_team %>
+<% rank = league.teams.standings.index(my_team)&.succ %>
+<section class="bg-white rounded-lg shadow p-4">
+  <div class="flex items-baseline justify-between">
+    <h2 class="font-bold"><%= link_to league.name, league_path(league), class: "hover:underline" %></h2>
+    <% if my_team %>
+      <span class="text-sm text-gray-600"><%= my_team.record %> · #<%= rank %> of <%= league.teams.size %></span>
+    <% end %>
+  </div>
+</section>
