@@ -1,5 +1,6 @@
 class SyncRun < ApplicationRecord
   KINDS = %w[players leagues projections live].freeze
+  RETENTION = 7.days
 
   validates :kind, inclusion: { in: KINDS }
 
@@ -9,17 +10,20 @@ class SyncRun < ApplicationRecord
 
   def self.last_success(kind) = succeeded.where(kind:).order(finished_at: :desc).first
 
-  # Runs the block and records the outcome. A Sleeper failure is stored, never raised,
+  # Runs the block and records the outcome. A failure is stored, never raised,
   # so a bad sync leaves existing data in place and shows up as stale.
   def self.track(kind)
     run = create!(kind:, started_at: Time.current)
     yield
     run.update!(finished_at: Time.current)
     true
-  rescue Sleeper::Error => e
-    run&.update!(finished_at: Time.current, error: e.message)
+  rescue StandardError => e
+    Rails.logger.error("SyncRun #{kind} failed: #{e.class}: #{e.message}") unless e.is_a?(Sleeper::Error)
+    run&.update!(finished_at: Time.current, error: "#{e.class.name.demodulize}: #{e.message}".truncate(500))
     false
   end
+
+  def self.prune(now: Time.current) = where(started_at: ...(now - RETENTION)).delete_all
 
   def succeeded? = finished_at.present? && error.nil?
 

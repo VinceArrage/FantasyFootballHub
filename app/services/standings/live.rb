@@ -9,14 +9,14 @@ module Standings
     def rows(league, week:)
       matchups = league.matchups.where(week:).to_a
       by_team = matchups.index_by(&:team_id)
-      in_progress = matchups.any? { _1.points.positive? }
 
       league.teams.map do |team|
         w, l, t = team.wins, team.losses, team.ties
         provisional = nil
         mine = by_team[team.id]
         opp = mine && matchups.find { _1.matchup_id == mine.matchup_id && _1.team_id != team.id }
-        if in_progress && opp
+        # A 0-0 matchup hasn't started (Thursday to Sunday), so it isn't a tie yet.
+        if opp && (mine.points.positive? || opp.points.positive?)
           provisional = mine.points <=> opp.points
           case provisional
           when 1 then w += 1

@@ -5,3 +5,10 @@ sunday: [9, 24]
 monday: [19, 24]
 # Saturday games only happen late in the season (see Nfl::Calendar::SATURDAY_GAMES_FROM_WEEK).
 saturday: [13, 24]
+
+# One-off game days (Thanksgiving, Black Friday, Christmas). Add next season's dates here.
+special: [12, 24]
+special_dates:
+  - 2026-11-26
+  - 2026-11-27
+  - 2026-12-25

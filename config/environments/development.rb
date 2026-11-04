@@ -79,4 +79,10 @@ Rails.application.configure do
   # Always-on personal app: jobs and broadcasts must work across processes.
   config.active_job.queue_adapter = :solid_queue
   config.solid_queue.connects_to = { database: { writing: :queue } }
+
+  # Runs all the time: keep the log small and rotated (5 files x 20 MB).
+  config.log_level = :info
+  config.logger = ActiveSupport::TaggedLogging.new(
+    ActiveSupport::Logger.new(Rails.root.join("log/development.log"), 5, 20.megabytes)
+  )
 end

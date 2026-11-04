@@ -39,4 +39,14 @@ class Ammo::GeneratorTest < ActiveSupport::TestCase
     @league.matchups.where(week: 9).update_all(matchup_id: nil)
     assert_empty lines
   end
+
+  test "a starter whose projection row is empty gets a bye line (S4)" do
+    starter = Player.find_by(sleeper_id: @opp.starters.first)
+    other = Player.find_by(sleeper_id: @opp.starters.second)
+    Projection.create!(player: starter, season: 2026, week: 9, stats: {})
+    Projection.create!(player: other, season: 2026, week: 9, stats: { "gp" => 1.0, "rec" => 3 })
+    texts = lines.select { _1[:kind] == :bye_starter }.map { _1[:text] }
+    assert texts.any? { _1.include?(starter.full_name) }
+    refute texts.any? { _1.include?(other.full_name) }
+  end
 end

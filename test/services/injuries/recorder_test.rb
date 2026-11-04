@@ -29,4 +29,16 @@ class Injuries::RecorderTest < ActiveSupport::TestCase
       end
     end
   end
+
+  test "injury to a player not on my rosters is not pushed to the feed (B2)" do
+    stranger = Player.create!(sleeper_id: "stranger", full_name: "Not Mine", position: "WR")
+    perform_enqueued_jobs do
+      assert_no_turbo_stream_broadcasts :injuries do
+        Injuries::Recorder.call([ { player: stranger, from: nil, to: "Out" } ])
+      end
+      assert_turbo_stream_broadcasts :injuries do
+        Injuries::Recorder.call([ { player: @my_starter, from: nil, to: "Out" } ])
+      end
+    end
+  end
 end

@@ -15,4 +15,8 @@ class Scoring::CalculatorTest < ActiveSupport::TestCase
   test "nil stats is zero (bye week)" do
     assert_equal 0.0, Scoring::Calculator.new("rec" => 1.0).points(nil)
   end
+
+  test "DEF points-allowed buckets still score (S11)" do
+    assert_equal 7.0, Scoring::Calculator.new("pts_allow_0" => 10.0, "pts_allow_1_6" => 7.0).points("pts_allow_1_6" => 1)
+  end
 end

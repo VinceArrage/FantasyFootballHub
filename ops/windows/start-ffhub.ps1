@@ -9,7 +9,8 @@ Set-Location $app
 while ($true) {
   Remove-Item -ErrorAction SilentlyContinue "tmp\pids\server.pid"
   "$(Get-Date -Format s) starting" | Out-File -Append -Encoding utf8 "log\ffhub-service.log"
-  & ruby bin/rails server -b 127.0.0.1 -p 3000 *>&1 | Out-File -Append -Encoding utf8 "log\ffhub-service.log"
+  # Rails already writes log\development.log (rotated); only start/exit lines go here.
+  & ruby bin/rails server -b 127.0.0.1 -p 3000 *> $null
   "$(Get-Date -Format s) exited with $LASTEXITCODE, restarting in 10s" | Out-File -Append -Encoding utf8 "log\ffhub-service.log"
   Start-Sleep -Seconds 10
 }

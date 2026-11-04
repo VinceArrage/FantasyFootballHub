@@ -23,7 +23,7 @@ module Sleeper
     end
 
     def state = get("state/nfl")
-    def user(username) = get("user/#{username}")
+    def user(username) = get("user/#{ERB::Util.url_encode(username)}")
     def leagues(user_id, season) = get("user/#{user_id}/leagues/nfl/#{season}")
     def league(id) = get("league/#{id}")
     def users(league_id) = get("league/#{league_id}/users")

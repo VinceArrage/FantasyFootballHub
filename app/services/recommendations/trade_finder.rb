@@ -3,7 +3,7 @@ module Recommendations
   # kept when it improves my best rest-of-season lineup and doesn't hurt theirs,
   # so they'd plausibly accept.
   class TradeFinder
-    TOP_PER_SIDE = 15
+    TOP_PER_SIDE = 12
     MAX_PER_OPPONENT = 2
 
     def initialize(league, values:, tolerance: 0.0)

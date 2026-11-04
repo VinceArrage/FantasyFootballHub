@@ -1,4 +1,4 @@
-# Trash-talk lines. Add your own; placeholders: %{opponent} %{player} %{points} %{week} %{rank} %{teams}
+# Trash-talk lines. Add your own; placeholders: %{opponent} %{player} %{status} %{points} %{week} %{rank} %{teams}
 injured_starter:
   - "Bold strategy, %{opponent}: starting %{player} while he's listed %{status}. Let me know how that works out."
   - "%{opponent} is fielding %{player} (%{status}). I'll send flowers."

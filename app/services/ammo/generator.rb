@@ -30,11 +30,13 @@ module Ammo
       opponent_starters.select(&:out?).map { line(:injured_starter, player: _1.full_name, status: _1.injury_status) }
     end
 
+    # Sleeper returns a row for players on bye, just with no stats (or gp 0).
     def bye_starters
-      projected = Projection.where(season: @league.season, week: @week, player: opponent_starters).pluck(:player_id)
-      return [] if projected.empty? # no projections synced yet: can't tell byes apart
+      return [] unless Projection.where(season: @league.season, week: @week).exists? # not synced: can't tell
 
-      opponent_starters.reject { projected.include?(_1.id) }.map { line(:bye_starter, player: _1.full_name) }
+      playing = Projection.where(season: @league.season, week: @week, player: opponent_starters)
+                          .select { |p| p.stats.present? && p.stats.fetch("gp", 1).to_f.positive? }.map(&:player_id)
+      opponent_starters.reject { playing.include?(_1.id) }.map { line(:bye_starter, player: _1.full_name) }
     end
 
     def worst_week

@@ -37,4 +37,14 @@ class Sync::LiveScoringTest < ActiveSupport::TestCase
     assert_equal expected, row.provisional
     assert_equal @league.my_team.wins + (expected == 1 ? 1 : 0), row.wins
   end
+
+  test "a 0-0 matchup is not a tie before kickoff (B1)" do
+    @league.matchups.where(week: 9).update_all(points: 0)
+    mine = @league.matchups.find_by(week: 9, team: @league.my_team)
+    other = @league.matchups.where(week: 9).where.not(matchup_id: mine.matchup_id).first
+    other.update!(points: 12.3)
+    row = Standings::Live.rows(@league, week: 9).find { _1.team.mine }
+    assert_nil row.provisional
+    assert_equal @league.my_team.ties, row.ties
+  end
 end

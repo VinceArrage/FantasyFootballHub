@@ -31,4 +31,11 @@ class Nfl::CalendarTest < ActiveSupport::TestCase
     refute Nfl::Calendar.live?(et("2026-11-07 16:00"), week: 9)
     assert Nfl::Calendar.live?(et("2026-12-19 16:00"), week: 15)
   end
+
+  test "Thanksgiving, Black Friday and Christmas are live (S5)" do
+    assert Nfl::Calendar.live?(et("2026-11-26 13:00"), week: 12)
+    assert Nfl::Calendar.live?(et("2026-11-27 15:00"), week: 12)
+    assert Nfl::Calendar.live?(et("2026-12-25 16:00"), week: 16)
+    assert Nfl::Calendar.game_day?(et("2026-11-27 15:00"), week: 12)
+  end
 end

@@ -1,6 +1,6 @@
 class ComputeTradeIdeasJob < ApplicationJob
   queue_as :default
-  limits_concurrency to: 1, key: ->(league_id) { "trade_ideas/#{league_id}" }, on_conflict: :discard
+  limits_concurrency to: 1, key: ->(league_id) { "trade_ideas/#{league_id}" }
 
   def perform(league_id)
     league = League.find(league_id)

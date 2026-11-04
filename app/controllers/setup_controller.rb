@@ -16,6 +16,7 @@ class SetupController < ApplicationController
 
     Account.delete_all
     Account.create!(sleeper_username: username, sleeper_user_id: user["user_id"])
+    # Projections need players; if they lose the race the catch-up job retries in 5 minutes.
     %w[players leagues projections].each { |kind| SyncJob.perform_later(kind) }
     redirect_to root_path, notice: "Linked #{user['display_name']}. First sync is running."
   rescue Sleeper::Error => e
