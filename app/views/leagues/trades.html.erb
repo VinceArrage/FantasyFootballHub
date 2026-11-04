@@ -1,0 +1,9 @@
+<% content_for :title, "Trade ideas · #{@league.name}" %>
+<h1 class="text-2xl font-bold mb-3"><%= @league.name %></h1>
+<%= render "leagues/tabs", league: @league %>
+<%= turbo_stream_from @league, :trade_ideas %>
+<section class="bg-white rounded-lg shadow p-4">
+  <h2 class="font-bold">Trade ideas</h2>
+  <p class="text-xs text-gray-500 mb-2">1-for-1, 2-for-1 and 1-for-2 swaps that raise your best rest-of-season lineup while their lineup doesn't get worse, so they might say yes.</p>
+  <%= render "leagues/trade_ideas", league: @league %>
+</section>

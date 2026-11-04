@@ -27,8 +27,31 @@ module Sync
         [ u["user_id"], u.dig("metadata", "team_name").presence || u["display_name"] ]
       end
       teams = @client.rosters(league.sleeper_id).map { |r| sync_team(league, r, owners, account) }
-      sync_matchups(league, teams.index_by(&:sleeper_roster_id), week)
+      teams_by_roster = teams.index_by(&:sleeper_roster_id)
+      sync_history(league, teams_by_roster, week)
+      sync_matchups(league, teams_by_roster, week)
+      sync_trades(league, week)
       league
+    end
+
+    # Past weeks never change, so they're fetched once: matchups (for the trade
+    # scorecard's points) and trades.
+    def sync_history(league, teams_by_roster, week)
+      ((league.history_synced_through + 1)...week).each do |past|
+        sync_matchups(league, teams_by_roster, past)
+        sync_trades(league, past)
+      end
+      league.update!(history_synced_through: week - 1) if league.history_synced_through < week - 1
+    end
+
+    def sync_trades(league, week)
+      @client.transactions(league.sleeper_id, week).each do |t|
+        next unless t["type"] == "trade" && t["status"] == "complete"
+
+        trade = league.trades.find_or_initialize_by(sleeper_transaction_id: t["transaction_id"])
+        trade.update!(week: t["leg"] || week, executed_at: Time.zone.at(t["status_updated"].to_i / 1000),
+                      roster_ids: t["roster_ids"] || [], adds: t["adds"] || {}, draft_picks: t["draft_picks"] || [])
+      end
     end
 
     def sync_team(league, raw, owners, account)

@@ -24,7 +24,10 @@ module SleeperStubs
     LEAGUE_IDS.each do |id|
       stub_sleeper("/league/#{id}/users", "users_#{id}.json")
       stub_sleeper("/league/#{id}/rosters", "rosters_#{id}.json")
-      stub_sleeper("/league/#{id}/matchups/#{week}", "matchups_#{id}_#{week}.json")
+      (1..week).each do |w|
+        stub_sleeper("/league/#{id}/matchups/#{w}", "matchups_#{id}_#{w}.json")
+        stub_sleeper("/league/#{id}/transactions/#{w}", "transactions_#{id}_#{w}.json")
+      end
     end
   end
 

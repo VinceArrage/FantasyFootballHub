@@ -3,6 +3,8 @@ class League < ApplicationRecord
 
   has_many :teams, dependent: :destroy
   has_many :matchups, dependent: :destroy
+  has_many :trades, dependent: :destroy
+  has_many :trade_ideas, dependent: :destroy
 
   def my_team = teams.find_by(mine: true)
 

@@ -1,0 +1,19 @@
+<div id="<%= dom_id(league, :trade_ideas) %>">
+  <% ideas = league.trade_ideas.includes(:opponent_team).order(my_gain: :desc) %>
+  <% if ideas.empty? %>
+    <p class="text-sm text-gray-500">No trade found that helps you without hurting the other side. Ideas refresh after each sync.</p>
+  <% else %>
+    <ul class="divide-y">
+      <% ideas.each do |idea| %>
+        <li class="py-3 text-sm">
+          <div class="font-semibold mb-1">With <%= idea.opponent_team.display_name %></div>
+          <div class="grid grid-cols-2 gap-2">
+            <div><span class="text-gray-500">You give:</span> <%= idea.give.map { "#{_1.full_name} (#{_1.position})" }.to_sentence %></div>
+            <div><span class="text-gray-500">You get:</span> <%= idea.get.map { "#{_1.full_name} (#{_1.position})" }.to_sentence %></div>
+          </div>
+          <div class="mt-1 text-gray-600"><%= idea.reason %></div>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+</div>

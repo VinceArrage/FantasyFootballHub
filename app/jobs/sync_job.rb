@@ -1,8 +1,13 @@
 class SyncJob < ApplicationJob
   queue_as :default
 
+  RECOMPUTES_TRADE_IDEAS = %w[leagues projections].freeze
+
   def perform(kind)
-    SyncRun.track(kind) { public_send("sync_#{kind}") }
+    ok = SyncRun.track(kind) { public_send("sync_#{kind}") }
+    return unless ok && RECOMPUTES_TRADE_IDEAS.include?(kind)
+
+    League.where(season: Nfl::Calendar.season).ids.each { ComputeTradeIdeasJob.perform_later(_1) }
   end
 
   def sync_players

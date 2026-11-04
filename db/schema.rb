@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_03_220000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_03_230000) do
   create_table "accounts", force: :cascade do |t|
     t.string "sleeper_username", null: false
     t.string "sleeper_user_id", null: false
@@ -39,6 +39,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_220000) do
     t.integer "total_rosters"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "history_synced_through", default: 0, null: false
     t.index ["sleeper_id"], name: "index_leagues_on_sleeper_id", unique: true
   end
 
@@ -123,6 +124,34 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_220000) do
     t.index ["league_id"], name: "index_teams_on_league_id"
   end
 
+  create_table "trade_ideas", force: :cascade do |t|
+    t.integer "league_id", null: false
+    t.integer "opponent_team_id", null: false
+    t.json "give_ids", default: [], null: false
+    t.json "get_ids", default: [], null: false
+    t.decimal "my_gain", precision: 8, scale: 2, null: false
+    t.decimal "their_delta", precision: 8, scale: 2, null: false
+    t.string "reason"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["league_id"], name: "index_trade_ideas_on_league_id"
+    t.index ["opponent_team_id"], name: "index_trade_ideas_on_opponent_team_id"
+  end
+
+  create_table "trades", force: :cascade do |t|
+    t.integer "league_id", null: false
+    t.string "sleeper_transaction_id", null: false
+    t.integer "week", null: false
+    t.datetime "executed_at"
+    t.json "roster_ids", default: [], null: false
+    t.json "adds", default: {}, null: false
+    t.json "draft_picks", default: [], null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["league_id"], name: "index_trades_on_league_id"
+    t.index ["sleeper_transaction_id"], name: "index_trades_on_sleeper_transaction_id", unique: true
+  end
+
   add_foreign_key "injury_events", "players"
   add_foreign_key "matchups", "leagues"
   add_foreign_key "matchups", "teams"
@@ -130,4 +159,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_220000) do
   add_foreign_key "roster_spots", "players"
   add_foreign_key "roster_spots", "teams"
   add_foreign_key "teams", "leagues"
+  add_foreign_key "trade_ideas", "leagues"
+  add_foreign_key "trade_ideas", "teams", column: "opponent_team_id"
+  add_foreign_key "trades", "leagues"
 end

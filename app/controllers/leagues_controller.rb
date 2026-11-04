@@ -9,6 +9,13 @@ class LeaguesController < ApplicationController
     @waivers = Recommendations::WaiverRanker.new(@league, values:, trending: Recommendations::Trending.adds).call
   end
 
+  def trades
+  end
+
+  def trade_log
+    @trades = @league.trades.recent_first
+  end
+
   private
 
   def set_league
