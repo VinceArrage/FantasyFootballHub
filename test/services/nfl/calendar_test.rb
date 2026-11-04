@@ -20,4 +20,15 @@ class Nfl::CalendarTest < ActiveSupport::TestCase
     assert_equal 2026, Nfl::Calendar.season
     assert_equal 9, Nfl::Calendar.week
   end
+
+  test "live on Sunday 1pm ET, not Tuesday" do
+    assert Nfl::Calendar.live?(et("2026-11-08 13:00"), week: 9)
+    refute Nfl::Calendar.live?(et("2026-11-10 13:00"), week: 9)
+    refute Nfl::Calendar.live?(et("2026-11-08 08:00"), week: 9)
+  end
+
+  test "Saturday live only from week 15" do
+    refute Nfl::Calendar.live?(et("2026-11-07 16:00"), week: 9)
+    assert Nfl::Calendar.live?(et("2026-12-19 16:00"), week: 15)
+  end
 end

@@ -1,0 +1,7 @@
+# When NFL games can be in progress, in Eastern time: [start_hour, end_hour).
+# LiveScoringJob only polls Sleeper inside these windows.
+thursday: [20, 24]
+sunday: [9, 24]
+monday: [19, 24]
+# Saturday games only happen late in the season (see Nfl::Calendar::SATURDAY_GAMES_FROM_WEEK).
+saturday: [13, 24]

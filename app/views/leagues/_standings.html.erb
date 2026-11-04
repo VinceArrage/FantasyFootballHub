@@ -1,12 +1,16 @@
+<% week ||= Nfl::Calendar.week %>
 <div id="<%= dom_id(league, :standings) %>" class="bg-white rounded-lg shadow p-4">
-  <h2 class="font-bold mb-2">Standings</h2>
+  <h2 class="font-bold mb-2">Standings <span class="text-xs font-normal text-gray-500">live: this week's leader counts as a win</span></h2>
   <table class="w-full text-sm">
     <thead><tr class="text-left text-gray-500"><th>#</th><th>Team</th><th>W-L</th><th class="text-right">PF</th></tr></thead>
     <tbody>
-      <% league.teams.standings.each_with_index do |team, i| %>
-        <tr class="<%= "font-semibold bg-emerald-50" if team.mine %>">
-          <td><%= i + 1 %></td><td><%= team.display_name %></td><td><%= team.record %></td>
-          <td class="text-right"><%= points(team.points_for) %></td>
+      <% Standings::Live.rows(league, week:).each_with_index do |row, i| %>
+        <tr class="<%= "font-semibold bg-emerald-50" if row.team.mine %>">
+          <td><%= i + 1 %></td>
+          <td><%= row.team.display_name %></td>
+          <td><%= row.wins %>-<%= row.losses %><%= "-#{row.ties}" if row.ties.positive? %>
+            <% unless row.provisional.nil? %><span class="text-xs <%= row.provisional.positive? ? "text-emerald-700" : "text-red-600" %>">(<%= { 1 => "W", -1 => "L", 0 => "T" }[row.provisional] %>*)</span><% end %></td>
+          <td class="text-right"><%= points(row.points_for) %></td>
         </tr>
       <% end %>
     </tbody>

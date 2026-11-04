@@ -2,6 +2,9 @@ default: &default
   catch_up_sync:
     class: CatchUpSyncJob
     schedule: every 5 minutes
+  live_scoring:
+    class: LiveScoringJob
+    schedule: every minute
 
 development:
   <<: *default

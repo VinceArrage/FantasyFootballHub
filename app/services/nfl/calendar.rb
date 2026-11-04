@@ -21,5 +21,18 @@ module Nfl
       t = time.in_time_zone(ZONE)
       t.thursday? || t.sunday? || t.monday? || (t.saturday? && week >= SATURDAY_GAMES_FROM_WEEK)
     end
+
+    def live?(time, week: self.week)
+      t = time.in_time_zone(ZONE)
+      day = t.strftime("%A").downcase
+      return false if day == "saturday" && week < SATURDAY_GAMES_FROM_WEEK
+
+      start_hour, end_hour = game_windows[day]
+      start_hour.present? && t.hour >= start_hour && t.hour < end_hour
+    end
+
+    def game_windows
+      @game_windows ||= YAML.load_file(Rails.root.join("config/game_windows.yml"))
+    end
   end
 end
