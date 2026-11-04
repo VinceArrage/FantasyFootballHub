@@ -71,13 +71,15 @@ module Sync
 
     def rebuild_roster(team, raw)
       starters = real_ids(raw["starters"])
-      all_ids = (starters + real_ids(raw["players"]) + real_ids(raw["reserve"])).uniq
+      reserve = real_ids(raw["reserve"])
+      all_ids = (starters + real_ids(raw["players"]) + reserve).uniq
       players = ensure_players(all_ids)
       Team.transaction do
         team.roster_spots.delete_all
         rows = all_ids.map do |id|
           slot = starters.index(id)
-          { team_id: team.id, player_id: players[id].id, starter: !slot.nil?, slot_index: slot }
+          { team_id: team.id, player_id: players[id].id, starter: !slot.nil?, slot_index: slot,
+            reserve: reserve.include?(id) }
         end
         RosterSpot.insert_all(rows) if rows.any?
       end

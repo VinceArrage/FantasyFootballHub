@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_03_230000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_04_000000) do
   create_table "accounts", force: :cascade do |t|
     t.string "sleeper_username", null: false
     t.string "sleeper_user_id", null: false
@@ -91,6 +91,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_230000) do
     t.integer "slot_index"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "reserve", default: false, null: false
     t.index ["player_id"], name: "index_roster_spots_on_player_id"
     t.index ["team_id", "player_id"], name: "index_roster_spots_on_team_id_and_player_id", unique: true
     t.index ["team_id"], name: "index_roster_spots_on_team_id"

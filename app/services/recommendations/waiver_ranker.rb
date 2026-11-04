@@ -15,7 +15,7 @@ module Recommendations
       my_team = @league.my_team or return []
       roster = my_team.players.to_a
       base = @values.lineup_total(roster)
-      drop = drop_candidate(roster)
+      drop = drop_candidate(my_team.players.merge(RosterSpot.where(reserve: false)).to_a)
 
       free_agents.filter_map do |fa|
         gain = (@values.lineup_total(roster + [ fa ]) - base).round(2)
@@ -39,6 +39,7 @@ module Recommendations
     end
 
     # Lowest rest-of-season value among players who don't make my best lineup.
+    # Players in an IR slot don't use a roster spot, so they're never the drop.
     def drop_candidate(roster)
       starting = @values.lineup(roster).lineup.filter_map { |_, c| c&.dig(:player)&.id }
       roster.reject { starting.include?(_1.id) }.min_by { @values.ros(_1) }

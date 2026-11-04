@@ -32,6 +32,12 @@ class Recommendations::WaiverRankerTest < ActiveSupport::TestCase
     assert_equal "RB", rank.first[:player].position
   end
 
+  test "an IR-slot player is never the suggested drop" do
+    spot = @league.my_team.roster_spots.where(starter: false).first
+    spot.update!(reserve: true)
+    rank.each { |w| refute_equal spot.player_id, w[:drop]&.id }
+  end
+
   test "faab_left only for FAAB leagues" do
     assert_kind_of Integer, rank.first[:faab_left]
     assert_nil rank(League.find_by(sleeper_id: VERSATERM)).first&.dig(:faab_left)
