@@ -16,6 +16,10 @@ class LeaguesController < ApplicationController
     @trades = @league.trades.recent_first
   end
 
+  def ammo
+    @lines = Ammo::Generator.new(@league, week: Nfl::Calendar.week).call
+  end
+
   private
 
   def set_league

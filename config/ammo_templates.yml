@@ -1,0 +1,16 @@
+# Trash-talk lines. Add your own; placeholders: %{opponent} %{player} %{points} %{week} %{rank} %{teams}
+injured_starter:
+  - "Bold strategy, %{opponent}: starting %{player} while he's listed %{status}. Let me know how that works out."
+  - "%{opponent} is fielding %{player} (%{status}). I'll send flowers."
+bye_starter:
+  - "%{player} is on bye, %{opponent}. You know that, right?"
+  - "Starting %{player} on a bye week is a choice, %{opponent}. A bad one."
+worst_week:
+  - "Remember week %{week}, %{opponent}? %{points} points. I do."
+  - "%{opponent} put up %{points} in week %{week}. My kicker could have done that."
+lost_trade:
+  - "How's that trade working out, %{opponent}? The other side is up %{points} points on you."
+  - "%{opponent} got fleeced: %{points} points behind on that deal and counting."
+bottom_standings:
+  - "%{rank} of %{teams}, %{opponent}. The view from down there must be something."
+  - "Fun fact, %{opponent}: you're %{rank} of %{teams}. Mathematically, I'm the favorite."

@@ -1,0 +1,19 @@
+<% content_for :title, "Ammo · #{@league.name}" %>
+<h1 class="text-2xl font-bold mb-3"><%= @league.name %></h1>
+<%= render "leagues/tabs", league: @league %>
+<section class="bg-white rounded-lg shadow p-4">
+  <h2 class="font-bold">Ammo for this week</h2>
+  <p class="text-xs text-gray-500 mb-3">Every line is backed by a real fact about your opponent. Edit or add lines in <code>config/ammo_templates.yml</code>.</p>
+  <% if @lines.empty? %>
+    <p class="text-sm text-gray-500">Your opponent is annoyingly flawless this week. Nothing to work with.</p>
+  <% else %>
+    <ul class="space-y-2">
+      <% @lines.each do |line| %>
+        <li class="flex items-center justify-between gap-3 rounded bg-gray-50 px-3 py-2 text-sm" data-controller="clipboard">
+          <span data-clipboard-target="source"><%= line[:text] %></span>
+          <button type="button" class="shrink-0 rounded bg-emerald-700 px-2 py-1 text-xs text-white" data-action="clipboard#copy" data-clipboard-target="button">Copy</button>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+</section>
