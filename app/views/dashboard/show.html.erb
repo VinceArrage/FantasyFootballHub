@@ -7,4 +7,12 @@
       <%= render "leagues/card", league: %>
     <% end %>
   </div>
+
+  <%= turbo_stream_from :injuries %>
+  <section class="mt-6 bg-white rounded-lg shadow p-4">
+    <h2 class="font-bold mb-2">Injury changes on my rosters</h2>
+    <ul id="injury_feed" class="divide-y">
+      <%= render partial: "injury_events/injury_event", collection: InjuryEvent.for_my_players.recent.includes(:player) %>
+    </ul>
+  </section>
 <% end %>

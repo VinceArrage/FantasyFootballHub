@@ -3,6 +3,8 @@ class SyncRun < ApplicationRecord
 
   validates :kind, inclusion: { in: KINDS }
 
+  after_update_commit :broadcast_stamps, if: -> { saved_change_to_finished_at? }
+
   scope :succeeded, -> { where.not(finished_at: nil).where(error: nil) }
 
   def self.last_success(kind) = succeeded.where(kind:).order(finished_at: :desc).first
@@ -20,4 +22,10 @@ class SyncRun < ApplicationRecord
   end
 
   def succeeded? = finished_at.present? && error.nil?
+
+  private
+
+  def broadcast_stamps
+    broadcast_replace_later_to :sync_status, target: "sync_stamps", partial: "shared/sync_stamps"
+  end
 end

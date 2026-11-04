@@ -1,0 +1,21 @@
+<% flags = Injuries::Flags.for(league.my_team) %>
+<div id="<%= dom_id(league, :injuries) %>">
+  <% if flags.empty? %>
+    <p class="text-sm text-emerald-700">No injury problems.</p>
+  <% else %>
+    <ul class="text-sm space-y-1">
+      <% flags.each do |flag| %>
+        <% color = { red: "bg-red-600", orange: "bg-orange-500", yellow: "bg-yellow-400" }[flag[:severity]] %>
+        <li class="flex items-center gap-2">
+          <span class="inline-block w-2 h-2 rounded-full <%= color %>"></span>
+          <% if flag[:player] %>
+            <span class="<%= "font-semibold" if flag[:starter] %>"><%= flag[:player].full_name %></span>
+            <span class="text-gray-500"><%= flag[:player].injury_status %><%= " · starter" if flag[:starter] %></span>
+          <% else %>
+            <span class="font-semibold">Empty starter slot</span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+</div>

@@ -6,7 +6,7 @@ class SyncJob < ApplicationJob
   end
 
   def sync_players
-    Sync::Players.new.call
+    Injuries::Recorder.call(Sync::Players.new.call)
   end
 
   def sync_leagues

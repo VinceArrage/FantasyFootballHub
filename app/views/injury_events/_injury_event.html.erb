@@ -1,0 +1,8 @@
+<li id="<%= dom_id(injury_event) %>" class="py-1 text-sm flex justify-between gap-2">
+  <span><strong><%= injury_event.player.full_name %></strong>
+    <span class="text-gray-500"><%= injury_event.player.position %> <%= injury_event.player.nfl_team %></span></span>
+  <span class="<%= injury_event.cleared? ? "text-emerald-700" : "text-red-600" %>">
+    <%= injury_event.from_status || "Healthy" %> → <%= injury_event.to_status || "Healthy" %>
+    <span class="text-gray-400"><%= time_ago_in_words(injury_event.observed_at) %> ago</span>
+  </span>
+</li>

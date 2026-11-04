@@ -10,12 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_03_200000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_03_210000) do
   create_table "accounts", force: :cascade do |t|
     t.string "sleeper_username", null: false
     t.string "sleeper_user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "injury_events", force: :cascade do |t|
+    t.integer "player_id", null: false
+    t.string "from_status"
+    t.string "to_status"
+    t.datetime "observed_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["observed_at"], name: "index_injury_events_on_observed_at"
+    t.index ["player_id"], name: "index_injury_events_on_player_id"
   end
 
   create_table "leagues", force: :cascade do |t|
@@ -100,6 +111,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_200000) do
     t.index ["league_id"], name: "index_teams_on_league_id"
   end
 
+  add_foreign_key "injury_events", "players"
   add_foreign_key "matchups", "leagues"
   add_foreign_key "matchups", "teams"
   add_foreign_key "roster_spots", "players"
