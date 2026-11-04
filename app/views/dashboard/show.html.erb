@@ -4,7 +4,7 @@
 <% else %>
   <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
     <% @leagues.each do |league| %>
-      <%= render "leagues/card", league: %>
+      <%= render "leagues/card", league:, week: @week, trending: @trending %>
     <% end %>
   </div>
 

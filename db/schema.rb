@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_03_210000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_03_220000) do
   create_table "accounts", force: :cascade do |t|
     t.string "sleeper_username", null: false
     t.string "sleeper_user_id", null: false
@@ -71,6 +71,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_210000) do
     t.index ["sleeper_id"], name: "index_players_on_sleeper_id", unique: true
   end
 
+  create_table "projections", force: :cascade do |t|
+    t.integer "player_id", null: false
+    t.integer "season", null: false
+    t.integer "week", null: false
+    t.json "stats", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["player_id", "season", "week"], name: "index_projections_on_player_id_and_season_and_week", unique: true
+    t.index ["player_id"], name: "index_projections_on_player_id"
+    t.index ["season", "week"], name: "index_projections_on_season_and_week"
+  end
+
   create_table "roster_spots", force: :cascade do |t|
     t.integer "team_id", null: false
     t.integer "player_id", null: false
@@ -114,6 +126,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_210000) do
   add_foreign_key "injury_events", "players"
   add_foreign_key "matchups", "leagues"
   add_foreign_key "matchups", "teams"
+  add_foreign_key "projections", "players"
   add_foreign_key "roster_spots", "players"
   add_foreign_key "roster_spots", "teams"
   add_foreign_key "teams", "leagues"

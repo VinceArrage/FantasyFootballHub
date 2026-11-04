@@ -8,6 +8,9 @@ module Nfl
 
     def state(client: Sleeper::Client.new)
       Rails.cache.fetch("nfl/state", expires_in: 1.hour) { client.state }
+    rescue Sleeper::Error
+      # Offline: fall back to what we last synced.
+      { "season" => League.maximum(:season) || Date.current.year, "week" => Matchup.maximum(:week) || 1 }
     end
 
     def season = state["season"].to_i

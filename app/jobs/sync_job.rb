@@ -14,5 +14,7 @@ class SyncJob < ApplicationJob
   end
 
   def sync_projections
+    last_week = League.where(season: Nfl::Calendar.season).map(&:playoff_end_week).max || 17
+    Sync::Projections.new.call(season: Nfl::Calendar.season, from_week: Nfl::Calendar.week, to_week: last_week)
   end
 end

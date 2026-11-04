@@ -37,10 +37,17 @@ module SleeperStubs
   # Full sync against the recorded fixtures: account, players, leagues for a week.
   def sync_fixture_leagues(week: 9)
     create_account
+    stub_sleeper("/state/nfl", "state.json")
+    stub_sleeper("/players/nfl/trending/add", "trending_add.json")
     stub_players
     stub_all_leagues(week:)
     Sync::Players.new(client: sleeper_client).call
     Sync::Leagues.new(client: sleeper_client).call(season: 2026, week:)
+  end
+
+  def sync_fixture_projections
+    stub_projections
+    Sync::Projections.new(source: Sleeper::ProjectionsSource.new(retry_interval: 0)).call(season: 2026, from_week: 9, to_week: 17)
   end
 
   def sleeper_client = Sleeper::Client.new(retry_interval: 0)

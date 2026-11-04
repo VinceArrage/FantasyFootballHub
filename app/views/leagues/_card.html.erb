@@ -10,4 +10,11 @@
   <%= turbo_stream_from league, :injuries %>
   <h3 class="mt-3 mb-1 text-xs uppercase tracking-wide text-gray-500">Injuries</h3>
   <%= render "leagues/injury_flags", league: %>
+  <% waivers = Recommendations::WaiverRanker.new(league, values: Valuation::PlayerValues.new(league, week:), trending:).call(limit: 3) %>
+  <h3 class="mt-3 mb-1 text-xs uppercase tracking-wide text-gray-500">Top waiver adds</h3>
+  <% if waivers.empty? %>
+    <p class="text-sm text-gray-500">Nothing worth a claim.</p>
+  <% else %>
+    <ol class="divide-y"><%= render partial: "leagues/waiver_row", collection: waivers, as: :waiver %></ol>
+  <% end %>
 </section>

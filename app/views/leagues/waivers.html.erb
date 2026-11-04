@@ -1,0 +1,15 @@
+<% content_for :title, "Waivers · #{@league.name}" %>
+<h1 class="text-2xl font-bold mb-3"><%= @league.name %></h1>
+<%= render "leagues/tabs", league: @league %>
+<section class="bg-white rounded-lg shadow p-4">
+  <div class="flex items-baseline justify-between">
+    <h2 class="font-bold">Best pickups for my lineup</h2>
+    <% if (faab = @waivers.first&.dig(:faab_left)) %><span class="text-sm text-gray-600">FAAB left: $<%= faab %></span><% end %>
+  </div>
+  <p class="text-xs text-gray-500 mb-2">Gain = how much my best starting lineup improves over weeks <%= values.week %>–<%= @league.playoff_end_week %>, using Sleeper projections and this league's scoring.</p>
+  <% if @waivers.empty? %>
+    <p class="text-sm text-gray-500">No free agent improves your lineup right now (or projections haven't synced yet).</p>
+  <% else %>
+    <ol class="divide-y"><%= render partial: "leagues/waiver_row", collection: @waivers, as: :waiver %></ol>
+  <% end %>
+</section>
