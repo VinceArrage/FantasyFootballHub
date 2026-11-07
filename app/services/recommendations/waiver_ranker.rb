@@ -4,6 +4,7 @@ module Recommendations
   class WaiverRanker
     PREFILTER_PER_POSITION = 40
     TRENDING_WEIGHT = 0.1
+    DROP_OPTIONS = 3
 
     def initialize(league, values:, trending: [])
       @league = league
@@ -15,14 +16,14 @@ module Recommendations
       my_team = @league.my_team or return []
       roster = my_team.players.to_a
       base = @values.lineup_total(roster)
-      drop = drop_candidate(my_team.players.merge(RosterSpot.where(reserve: false)).to_a)
+      drops = drop_candidates(my_team.players.merge(RosterSpot.where(reserve: false)).to_a)
 
       free_agents.filter_map do |fa|
         gain = (@values.lineup_total(roster + [ fa ]) - base).round(2)
         rank = @trending_rank[fa.sleeper_id]
         next if gain <= 0 && rank.nil?
 
-        { player: fa, gain:, drop:, trending_rank: rank, faab_left: faab_left(my_team),
+        { player: fa, gain:, drop: drops.first&.dig(:player), drops:, trending_rank: rank, faab_left: faab_left(my_team),
           score: gain + (rank ? (51 - rank) * TRENDING_WEIGHT : 0) }
       end.sort_by { -_1[:score] }.first(limit)
     end
@@ -38,11 +39,14 @@ module Recommendations
             .flat_map { |_, players| players.max_by(PREFILTER_PER_POSITION) { @values.ros(_1) } }
     end
 
-    # Lowest rest-of-season value among players who don't make my best lineup.
-    # Players in an IR slot don't use a roster spot, so they're never the drop.
-    def drop_candidate(roster)
+    # The lowest rest-of-season values among players who don't make my best
+    # lineup, cheapest first. Players in an IR slot don't use a roster spot, so
+    # they're never a drop.
+    def drop_candidates(roster)
       starting = @values.lineup(roster).lineup.filter_map { |_, c| c&.dig(:player)&.id }
-      roster.reject { starting.include?(_1.id) }.min_by { @values.ros(_1) }
+      roster.reject { starting.include?(_1.id) }
+            .map { { player: _1, ros: @values.ros(_1) } }
+            .min_by(DROP_OPTIONS) { _1[:ros] }
     end
 
     def faab_left(team)

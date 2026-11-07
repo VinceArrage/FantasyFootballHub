@@ -6,6 +6,17 @@
   </span>
   <span class="text-gray-600">
     <span class="font-semibold text-emerald-700">+<%= points(waiver[:gain]) %></span> pts rest of season
-    <% if waiver[:drop] %> · drop <%= waiver[:drop].full_name %><% end %>
+    <% drops = waiver[:drops] || [] %>
+    <% if drops.size > 1 %>
+      · <label>drop
+        <select aria-label="Player to drop for <%= waiver[:player].full_name %>"
+                class="ml-1 rounded border border-gray-300 bg-white py-0.5 pl-1 pr-6 text-sm text-gray-800">
+          <% drops.each_with_index do |d, i| %>
+            <option<%= " selected" if i.zero? %>><%= d[:player].full_name %> (<%= d[:player].position %>, <%= points(d[:ros]) %> pts)</option>
+          <% end %>
+        </select>
+      </label>
+    <% elsif drops.one? %> · drop <%= drops.first[:player].full_name %>
+    <% end %>
   </span>
 </li>

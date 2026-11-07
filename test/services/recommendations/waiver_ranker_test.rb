@@ -35,7 +35,17 @@ class Recommendations::WaiverRankerTest < ActiveSupport::TestCase
   test "an IR-slot player is never the suggested drop" do
     spot = @league.my_team.roster_spots.where(starter: false).first
     spot.update!(reserve: true)
-    rank.each { |w| refute_equal spot.player_id, w[:drop]&.id }
+    rank.each { |w| refute_includes w[:drops].map { _1[:player].id }, spot.player_id }
+  end
+
+  test "offers up to three drops, cheapest first, none of them starters" do
+    w = rank.first
+    drops = w[:drops]
+    assert_includes 1..3, drops.size
+    assert_equal w[:drop], drops.first[:player]
+    assert_equal drops.map { _1[:ros] }.sort, drops.map { _1[:ros] }
+    starters = @values.lineup(@league.my_team.players.to_a).lineup.filter_map { |_, c| c&.dig(:player)&.id }
+    drops.each { refute_includes starters, _1[:player].id }
   end
 
   test "faab_left only for FAAB leagues" do
