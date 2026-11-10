@@ -10,6 +10,8 @@ class LeaguesController < ApplicationController
   end
 
   def trades
+    me = @league.my_team
+    @needs = Valuation::TeamNeeds.new(@league, values:).report(me) if me
   end
 
   def trade_log

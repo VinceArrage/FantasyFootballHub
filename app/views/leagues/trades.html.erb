@@ -2,8 +2,15 @@
 <h1 class="text-2xl font-bold mb-3"><%= @league.name %></h1>
 <%= render "leagues/tabs", league: @league %>
 <%= turbo_stream_from @league, :trade_ideas %>
+<% if @needs %>
+  <section class="bg-white rounded-lg shadow p-4 mb-4">
+    <h2 class="font-bold">What your team needs</h2>
+    <p class="text-xs text-gray-500 mb-2">Your best rest-of-season lineup by position, ranked against every team in the league. Bottom third is a need; top third is a strength.</p>
+    <%= render "leagues/team_needs", report: @needs %>
+  </section>
+<% end %>
 <section class="bg-white rounded-lg shadow p-4">
   <h2 class="font-bold">Trade ideas</h2>
-  <p class="text-xs text-gray-500 mb-2">1-for-1, 2-for-1 and 1-for-2 swaps that raise your best rest-of-season lineup while their lineup doesn't get worse, so they might say yes.</p>
+  <p class="text-xs text-gray-500 mb-2">1-for-1, 2-for-1 and 1-for-2 swaps that improve a position you need, raise your lineup overall, and don't make their lineup worse. Deals that also fill one of their needs come first, since they're the likeliest to be accepted.</p>
   <%= render "leagues/trade_ideas", league: @league %>
 </section>

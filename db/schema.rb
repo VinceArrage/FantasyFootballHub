@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_04_000000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_09_000000) do
   create_table "accounts", force: :cascade do |t|
     t.string "sleeper_username", null: false
     t.string "sleeper_user_id", null: false
@@ -135,6 +135,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_04_000000) do
     t.string "reason"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "my_need"
+    t.string "their_need"
     t.index ["league_id"], name: "index_trade_ideas_on_league_id"
     t.index ["opponent_team_id"], name: "index_trade_ideas_on_opponent_team_id"
   end

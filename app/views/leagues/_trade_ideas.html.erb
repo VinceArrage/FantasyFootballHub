@@ -1,12 +1,16 @@
 <div id="<%= dom_id(league, :trade_ideas) %>">
   <% ideas = league.trade_ideas.includes(:opponent_team).order(my_gain: :desc) %>
   <% if ideas.empty? %>
-    <p class="text-sm text-gray-500">No trade found that helps you without hurting the other side. Ideas refresh after each sync.</p>
+    <p class="text-sm text-gray-500">No trade found that fixes one of your needs without hurting the other side. Ideas refresh after each sync.</p>
   <% else %>
     <ul class="divide-y">
       <% ideas.each do |idea| %>
         <li class="py-3 text-sm">
-          <div class="font-semibold mb-1">With <%= idea.opponent_team.display_name %></div>
+          <div class="font-semibold mb-1 flex flex-wrap items-center gap-2">
+            <span>With <%= idea.opponent_team.display_name %></span>
+            <% if idea.my_need.present? %><span class="rounded px-2 py-0.5 text-xs font-normal bg-red-100 text-red-800">Fills your <%= idea.my_need.split(",").to_sentence %></span><% end %>
+            <% if idea.their_need.present? %><span class="rounded px-2 py-0.5 text-xs font-normal bg-emerald-100 text-emerald-800">Fills their <%= idea.their_need.split(",").to_sentence %></span><% end %>
+          </div>
           <div class="grid grid-cols-2 gap-2">
             <div><span class="text-gray-500">You give:</span> <%= idea.give.map { "#{_1.full_name} (#{_1.position})" }.to_sentence %></div>
             <div><span class="text-gray-500">You get:</span> <%= idea.get.map { "#{_1.full_name} (#{_1.position})" }.to_sentence %></div>

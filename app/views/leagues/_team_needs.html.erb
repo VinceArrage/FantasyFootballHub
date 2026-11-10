@@ -1,0 +1,29 @@
+<%# locals: (report:) %>
+<% badge = { need: "bg-red-100 text-red-800", ok: "bg-gray-100 text-gray-700", strength: "bg-emerald-100 text-emerald-800" } %>
+<% label = { need: "Need", ok: "OK", strength: "Strength" } %>
+<div class="overflow-x-auto">
+  <table class="w-full text-sm">
+    <thead class="text-left text-xs text-gray-500">
+      <tr><th class="py-1">Group</th><th>Your starters</th><th class="text-right">Pts</th><th class="text-right">vs median</th><th class="text-right">Rank</th><th></th></tr>
+    </thead>
+    <tbody class="divide-y">
+      <% report.rows.each do |row| %>
+        <tr>
+          <td class="py-1 font-semibold"><%= row.group %></td>
+          <td class="text-gray-600"><%= row.starters.map(&:full_name).join(", ") %></td>
+          <td class="text-right"><%= number_with_precision(row.points, precision: 1) %></td>
+          <td class="text-right <%= row.gap.negative? ? "text-red-700" : "text-emerald-700" %>"><%= format("%+.1f", row.gap) %></td>
+          <td class="text-right whitespace-nowrap"><%= row.rank.ordinalize %> of <%= row.teams %></td>
+          <td class="text-right"><span class="rounded px-2 py-0.5 text-xs <%= badge[row.status] %>"><%= label[row.status] %></span></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<p class="mt-2 text-xs text-gray-500">
+  <% if report.surplus.any? %>
+    Tradeable depth (bench players above replacement level): <%= report.surplus.map { "#{_1.full_name} (#{_1.position})" }.to_sentence %>.
+  <% else %>
+    No bench player is above replacement level, so trades will cost you a starter or pair two lesser players.
+  <% end %>
+</p>

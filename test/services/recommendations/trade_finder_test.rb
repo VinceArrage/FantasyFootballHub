@@ -18,6 +18,40 @@ class Recommendations::TradeFinderTest < ActiveSupport::TestCase
     end
   end
 
+  test "every idea raises a group I need, and says which" do
+    league = League.find_by(sleeper_id: GATINEAU)
+    values = Valuation::PlayerValues.new(league, week: 9)
+    my_needs = Valuation::TeamNeeds.new(league, values:).report(league.my_team).needs
+    assert my_needs.any?, "fixture roster should have at least one need"
+    ideas = find(league)
+    assert ideas.any?
+    ideas.each do |idea|
+      assert idea[:my_need].present?
+      assert_empty idea[:my_need].split(",") - my_needs
+      assert_match(/Fills your/, idea[:reason])
+    end
+  end
+
+  test "every player I receive would start for me, and kickers and defenses are never traded" do
+    league = League.find_by(sleeper_id: VERSATERM)
+    values = Valuation::PlayerValues.new(league, week: 9)
+    mine = league.my_team.players.to_a
+    find(league).each do |idea|
+      players = Player.find(idea[:give_ids] + idea[:get_ids])
+      assert_empty players.map(&:position) & %w[K DEF]
+      after = mine - Player.find(idea[:give_ids]) + Player.find(idea[:get_ids])
+      started = values.lineup(after).lineup.filter_map { _2&.dig(:player) }
+      assert_empty Player.find(idea[:get_ids]) - started
+    end
+  end
+
+  test "suggests at most one offer per target player per opponent" do
+    LEAGUE_IDS.each do |id|
+      keys = find(League.find_by(sleeper_id: id)).map { [ _1[:opponent_team].id, _1[:get_ids].sort ] }
+      assert_equal keys.uniq.size, keys.size
+    end
+  end
+
   test "never offers or asks for an Out player" do
     out_ids = Player.where(injury_status: Player::OUT_STATUSES).ids
     LEAGUE_IDS.each do |id|
